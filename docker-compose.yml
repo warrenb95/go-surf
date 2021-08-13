@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  gosurf:
+    image: gosurf
+    build:
+      context: .
+      dockerfile: ./Dockerfile
