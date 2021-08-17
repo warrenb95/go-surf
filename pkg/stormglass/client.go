@@ -75,5 +75,9 @@ func (c Client) Get(ctx context.Context, spot gosurf.Spot, params string) ([]gos
 func processResponse(response resbody, spot gosurf.Spot) ([]gosurf.Spot, error) {
 	spotSlice := []gosurf.Spot{}
 
+	// TODO: using the reflecy pkg iterate over resbody
+	// average out the value then add the value to the spot
+	// using the field name
+
 	return spotSlice, nil
 }
