@@ -20,12 +20,14 @@ type Client struct {
 }
 
 type resbody struct {
-	AirTemperature   []floatvalue `json:"airTemperature"`
-	WaterTemperature []floatvalue `json:"waterTemperature"`
-	WaveHeight       []floatvalue `json:"waveHeight"`
-	WavePeriod       []floatvalue `json:"wavePeriod"`
-	WindSpeed        []floatvalue `json:"windSpeed"`
-	Time             time.Time    `json:"time"`
+	Hours []struct {
+		AirTemperature   []floatvalue `json:"airTemperature"`
+		WaterTemperature []floatvalue `json:"waterTemperature"`
+		WaveHeight       []floatvalue `json:"waveHeight"`
+		WavePeriod       []floatvalue `json:"wavePeriod"`
+		WindSpeed        []floatvalue `json:"windSpeed"`
+		Time             time.Time    `json:"time"`
+	} `json:"hours"`
 }
 
 type floatvalue struct {
@@ -56,7 +58,7 @@ func (c Client) Get(ctx context.Context, spot gosurf.Spot, params string) ([]gos
 		log.Printf("can't read body bytes in stormglass response: %v", err)
 		return []gosurf.Spot{}, fmt.Errorf("can't read body bytes in stormglass response: %v", err)
 	}
-	log.Println(string(body))
+	// log.Println(string(body))
 
 	var resBody resbody
 	err = json.Unmarshal(body, &resBody)
@@ -64,6 +66,8 @@ func (c Client) Get(ctx context.Context, spot gosurf.Spot, params string) ([]gos
 		log.Printf("error unmarshalling into resbody: %v", err)
 		return []gosurf.Spot{}, fmt.Errorf("error unmarshalling into resbody: %v", err)
 	}
+
+	log.Println(resBody)
 
 	return processResponse(resBody, spot)
 }

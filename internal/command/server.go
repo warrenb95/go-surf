@@ -21,16 +21,16 @@ func (s Server) Run(ctx context.Context) error {
 	// loop over spots
 	for _, spot := range s.Config.Spots {
 		// cansurf spot??
-		canSurf, err := s.SurfGuru.CanSurf(ctx, spot)
+		_, err := s.SurfGuru.CanSurf(ctx, spot)
 		if err != nil {
 			log.Println("error handlling spot %s, %v", spot.Name, err)
 			return err
 		}
 
 		// if can surf then send report to user
-		if canSurf {
-			s.Twilio.SendAlert(spot.String())
-		}
+		// if canSurf {
+		// 	s.Twilio.SendAlert(spot.String())
+		// }
 	}
 
 	return nil
