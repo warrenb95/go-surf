@@ -4,13 +4,14 @@ import (
 	"context"
 	"github/warrenb95/go-surf/internal/config"
 	"github/warrenb95/go-surf/internal/gosurf"
-	"github/warrenb95/go-surf/internal/twilio"
+	"github/warrenb95/go-surf/pkg/twilio"
 	"log"
 )
 
 type Server struct {
-	Config       config.Config
-	TwilioClient twilio.Client
+	Config   config.Config
+	Twilio   twilio.Client
+	SurfGuru gosurf.SurfGuru
 }
 
 func (s Server) Run(ctx context.Context) error {
@@ -20,7 +21,7 @@ func (s Server) Run(ctx context.Context) error {
 	// loop over spots
 	for _, spot := range s.Config.Spots {
 		// cansurf spot??
-		canSurf, err := gosurf.CanSurf(ctx, spot)
+		canSurf, err := s.SurfGuru.CanSurf(ctx, spot)
 		if err != nil {
 			log.Println("error handlling spot %s, %v", spot.Name, err)
 			return err
@@ -28,7 +29,7 @@ func (s Server) Run(ctx context.Context) error {
 
 		// if can surf then send report to user
 		if canSurf {
-			s.TwilioClient.SendAlert(spot.String())
+			s.Twilio.SendAlert(spot.String())
 		}
 	}
 

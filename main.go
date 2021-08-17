@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github/warrenb95/go-surf/internal/command"
 	"github/warrenb95/go-surf/internal/config"
-	"github/warrenb95/go-surf/internal/twilio"
+	"github/warrenb95/go-surf/internal/gosurf"
+	"github/warrenb95/go-surf/pkg/stormglass"
+	"github/warrenb95/go-surf/pkg/twilio"
 	"log"
 	"net/http"
 	"os"
@@ -41,11 +43,17 @@ func main() {
 
 	s := command.Server{
 		Config: cfg,
-		TwilioClient: twilio.Client{
+		Twilio: twilio.Client{
 			Config:             cfg,
 			HttpClient:         &http.Client{},
 			UrlString:          twilioURL,
 			TargetMobileNumber: cfg.TargetMobileNumber,
+		},
+		SurfGuru: gosurf.SurfGuru{
+			Client: stormglass.Client{
+				Config:     cfg,
+				HttpClient: &http.Client{},
+			},
 		},
 	}
 

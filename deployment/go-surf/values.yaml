@@ -1,15 +1,16 @@
 servingPort: 10000
 spots:
-  - name: Bracklesham
-    lng: 50.760920
-    lat: -0.871753
+  - name: East Witterings
+    lng: 50.76417444334239
+    lat: -0.8772935768876879
     tide:
       position: LOW
       before: -3
       after: 3
     period: 8
-    minWaveHeight: 0.6
+    waveHeight: 0.6
     
 messagingServiceSid: MG5e6b3d52eaf78d3b746d2c3b51940390
 accountSid: AC3596bf01c9b1d9b42a9f4c330a65b4ba
 targetMobileNumber: +447547640051
+stormglassURL: https://api.stormglass.io/v1/weather/point?

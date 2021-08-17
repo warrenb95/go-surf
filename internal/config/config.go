@@ -15,6 +15,7 @@ type Config struct {
 	AccountSID          string        `yaml:"accountSid"`
 	MessagingServiceSid string        `yaml:"messagingServiceSid"`
 	TargetMobileNumber  string        `yaml:"targetMobileNumber"`
+	StormglassURL       string        `yaml:"stormglassURL"`
 }
 
 func Parse(ctx context.Context, filename string) (Config, error) {
