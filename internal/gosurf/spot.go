@@ -37,5 +37,5 @@ type Temperature struct {
 
 func (s Spot) String() string {
 	return fmt.Sprintf("\n\nSpot: %v\nDate: %v\nPeriod: %vs\nHeight: %vm\nTide: %v\nAir Temp: %vc\nWater Temp: %vc",
-		s.Name, s.Tide.High.Format("2001-01-01"), s.Period, s.WaveHeight, s.Tide.Position, s.Temperature.Air, s.Temperature.Water)
+		s.Name, s.Tide.High.Format("2006-01-02"), s.Period, s.WaveHeight, s.Tide.Position, s.Temperature.Air, s.Temperature.Water)
 }

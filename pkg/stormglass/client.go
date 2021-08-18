@@ -45,7 +45,7 @@ type floatvalue struct {
 	Value float64 `json:"value"`
 }
 
-func (c Client) Get(ctx context.Context, spot gosurf.Spot, params string) (map[string]map[int]gosurf.Spot, error) {
+func (c Client) Get(ctx context.Context, spot gosurf.Spot, params string) (map[string]map[int]*gosurf.Spot, error) {
 	argUrl := fmt.Sprintf("%slat=%v&lng=%v&params=%s", c.Config.StormglassWeatherURL, spot.Lat, spot.Lng, params)
 
 	var wbody weatherbody
@@ -102,9 +102,9 @@ func (c Client) getObjFromURL(url string, obj interface{}) error {
 // processResponse will process the data and create a slice of Spots.
 // this might not belong here as it is specific to the internal pkg but i
 // dunno where to put it.
-func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[string]map[int]gosurf.Spot, error) {
+func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[string]map[int]*gosurf.Spot, error) {
 	// spotMap use date string as key YYYY-MM-DD
-	spotMap := map[string]map[int]gosurf.Spot{}
+	spotMap := map[string]map[int]*gosurf.Spot{}
 
 	// sort out the weather first and then add the tides
 	for _, forecast := range wbody.Hours {
@@ -114,19 +114,22 @@ func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[s
 		wavePeriod := sumValueSlice(forecast.WavePeriod) / float64(len(forecast.WavePeriod))
 		windSpeed := sumValueSlice(forecast.WindSpeed) / float64(len(forecast.WindSpeed))
 
-		date := forecast.Time.Format("2000-01-01")
+		date := forecast.Time.Format("2006-01-02")
+		log.Printf("weather forecast date : %v", date)
 
 		if _, ok := spotMap[date]; !ok {
-			spotMap[date] = map[int]gosurf.Spot{}
+			spotMap[date] = map[int]*gosurf.Spot{}
 		}
 
 		hour := forecast.Time.Hour()
 
-		spotMap[date][hour] = gosurf.Spot{
-			Name:       spot.Name,
-			Lng:        spot.Lng,
-			Lat:        spot.Lat,
-			Tide:       gosurf.Tide{},
+		spotMap[date][hour] = &gosurf.Spot{
+			Name: spot.Name,
+			Lng:  spot.Lng,
+			Lat:  spot.Lat,
+			Tide: gosurf.Tide{
+				Position: spot.Tide.Position,
+			},
 			Period:     wavePeriod,
 			WaveHeight: waveHeight,
 			Temperature: gosurf.Temperature{
@@ -137,16 +140,36 @@ func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[s
 		}
 	}
 
-	// sort out the tides now
+	type tide struct {
+		Low  time.Time
+		High time.Time
+	}
+
+	tideMap := map[string]tide{}
 	for _, forecast := range tbody.Data {
-		date := forecast.Time.Format("2000-01-01")
+		date := forecast.Time.Format("2006-01-02")
+		_, ok := tideMap[date]
+		if !ok {
+			tideMap[date] = tide{}
+		}
+		if forecast.Type == Low {
+			// Had to do like this cos can't do direct assignment for some reason :(
+			t := tideMap[date]
+			t.Low = forecast.Time
+			tideMap[date] = t
+		} else {
+			t := tideMap[date]
+			t.High = forecast.Time
+			tideMap[date] = t
+		}
+	}
+
+	// sort out the tides now
+	for date, forecast := range tideMap {
 		if day, ok := spotMap[date]; ok {
 			for _, hour := range day {
-				if forecast.Type == Low {
-					hour.Tide.Low = forecast.Time
-				} else {
-					hour.Tide.High = forecast.Time
-				}
+				hour.Tide.Low = forecast.Low
+				hour.Tide.High = forecast.High
 			}
 		}
 	}

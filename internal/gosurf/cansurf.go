@@ -12,7 +12,7 @@ type SurfGuru struct {
 	Client Fetcher
 }
 
-func (s SurfGuru) CanSurf(ctx context.Context, spot Spot) (bool, map[string]Spot, error) {
+func (s SurfGuru) CanSurf(ctx context.Context, spot Spot) (bool, map[string]*Spot, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 	spotMap, err := s.Client.Get(ctx, spot, params)
@@ -26,10 +26,11 @@ func (s SurfGuru) CanSurf(ctx context.Context, spot Spot) (bool, map[string]Spot
 	return true, canSurfMap, nil
 }
 
-func calculate(spot Spot, spotMap map[string]map[int]Spot) map[string]Spot {
-	canSurfMap := map[string]Spot{}
+func calculate(spot Spot, spotMap map[string]map[int]*Spot) map[string]*Spot {
+	canSurfMap := map[string]*Spot{}
 
 	for date, day := range spotMap {
+		log.Printf("spot date key: %v", date)
 		// calculate the wave period and tide
 		for hour, sp := range day {
 			if sp.Period < spot.Period {

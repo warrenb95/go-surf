@@ -10,13 +10,13 @@ import (
 func TestCalculate(t *testing.T) {
 	type args struct {
 		spot    Spot
-		spotMap map[string]map[int]Spot
+		spotMap map[string]map[int]*Spot
 	}
 
 	testCases := []struct {
 		desc   string
 		args   args
-		result map[string]Spot
+		result map[string]*Spot
 	}{
 		{
 			desc: "should calculate tide position all successfully",
@@ -30,7 +30,7 @@ func TestCalculate(t *testing.T) {
 					},
 					Period: 10,
 				},
-				spotMap: map[string]map[int]Spot{
+				spotMap: map[string]map[int]*Spot{
 					"2001-01-01": {
 						0: {
 							Period: 11,
@@ -43,7 +43,7 @@ func TestCalculate(t *testing.T) {
 					},
 				},
 			},
-			result: map[string]Spot{
+			result: map[string]*Spot{
 				"2001-01-01": {
 					Period: 11,
 				},
@@ -61,7 +61,7 @@ func TestCalculate(t *testing.T) {
 					},
 					Period: 10,
 				},
-				spotMap: map[string]map[int]Spot{
+				spotMap: map[string]map[int]*Spot{
 					"2001-01-01": {
 						time.Now().Hour() - 1: {
 							Period: 11,
@@ -86,7 +86,7 @@ func TestCalculate(t *testing.T) {
 					},
 				},
 			},
-			result: map[string]Spot{
+			result: map[string]*Spot{
 				"2001-01-01": {
 					Period: 11,
 					Tide: Tide{
@@ -110,7 +110,7 @@ func TestCalculate(t *testing.T) {
 					},
 					Period: 10,
 				},
-				spotMap: map[string]map[int]Spot{
+				spotMap: map[string]map[int]*Spot{
 					"2001-01-01": {
 						time.Now().Hour() - 1: {
 							Period: 11,
@@ -135,7 +135,7 @@ func TestCalculate(t *testing.T) {
 					},
 				},
 			},
-			result: map[string]Spot{
+			result: map[string]*Spot{
 				"2001-01-01": {
 					Period: 11,
 					Tide: Tide{
