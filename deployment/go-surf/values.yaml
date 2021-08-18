@@ -4,7 +4,7 @@ spots:
     lng: 50.76417444334239
     lat: -0.8772935768876879
     tide:
-      position: LOW
+      position: low
       before: -3
       after: 3
     period: 8

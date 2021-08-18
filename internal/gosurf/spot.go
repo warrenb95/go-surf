@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	HighTide = "HIGH"
-	AllTide  = "ALL"
-	LowTide  = "LOW"
+	HighTide = "high"
+	AllTide  = "all"
+	LowTide  = "low"
 )
 
 type Spot struct {
@@ -36,6 +36,6 @@ type Temperature struct {
 }
 
 func (s Spot) String() string {
-	return fmt.Sprintf("\n\nSpot: %v\nStart: %v\nEnd: %v\nPeriod: %vs\nHeight: %vm\nAir Temp: %vc\nWater Temp: %vc",
-		s.Name, s.Tide.TimeBefore, s.Tide.TimeAfter, s.Period, s.WaveHeight, s.Temperature.Air, s.Temperature.Water)
+	return fmt.Sprintf("\n\nSpot: %v\nDate: %v\nPeriod: %vs\nHeight: %vm\nTide: %v\nAir Temp: %vc\nWater Temp: %vc",
+		s.Name, s.Tide.High.Format("2001-01-01"), s.Period, s.WaveHeight, s.Tide.Position, s.Temperature.Air, s.Temperature.Water)
 }

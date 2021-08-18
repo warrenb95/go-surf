@@ -45,7 +45,7 @@ type floatvalue struct {
 	Value float64 `json:"value"`
 }
 
-func (c Client) Get(ctx context.Context, spot gosurf.Spot, params string) (map[string][]*gosurf.Spot, error) {
+func (c Client) Get(ctx context.Context, spot gosurf.Spot, params string) (map[string]map[int]gosurf.Spot, error) {
 	argUrl := fmt.Sprintf("%slat=%v&lng=%v&params=%s", c.Config.StormglassWeatherURL, spot.Lat, spot.Lng, params)
 
 	var wbody weatherbody
@@ -102,9 +102,9 @@ func (c Client) getObjFromURL(url string, obj interface{}) error {
 // processResponse will process the data and create a slice of Spots.
 // this might not belong here as it is specific to the internal pkg but i
 // dunno where to put it.
-func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[string][]*gosurf.Spot, error) {
+func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[string]map[int]gosurf.Spot, error) {
 	// spotMap use date string as key YYYY-MM-DD
-	spotMap := map[string][]*gosurf.Spot{}
+	spotMap := map[string]map[int]gosurf.Spot{}
 
 	// sort out the weather first and then add the tides
 	for _, forecast := range wbody.Hours {
@@ -117,10 +117,12 @@ func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[s
 		date := forecast.Time.Format("2000-01-01")
 
 		if _, ok := spotMap[date]; !ok {
-			spotMap[date] = []*gosurf.Spot{}
+			spotMap[date] = map[int]gosurf.Spot{}
 		}
 
-		spotMap[date] = append(spotMap[date], &gosurf.Spot{
+		hour := forecast.Time.Hour()
+
+		spotMap[date][hour] = gosurf.Spot{
 			Name:       spot.Name,
 			Lng:        spot.Lng,
 			Lat:        spot.Lat,
@@ -132,7 +134,7 @@ func processResponse(wbody weatherbody, tbody tidebody, spot gosurf.Spot) (map[s
 				Water: waterTemp,
 			},
 			WindSpeed: windSpeed,
-		})
+		}
 	}
 
 	// sort out the tides now

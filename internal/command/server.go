@@ -6,6 +6,8 @@ import (
 	"github/warrenb95/go-surf/internal/gosurf"
 	"github/warrenb95/go-surf/pkg/twilio"
 	"log"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type Server struct {
@@ -21,16 +23,26 @@ func (s Server) Run(ctx context.Context) error {
 	// loop over spots
 	for _, spot := range s.Config.Spots {
 		// cansurf spot??
-		_, err := s.SurfGuru.CanSurf(ctx, spot)
+		canSurf, surfMap, err := s.SurfGuru.CanSurf(ctx, spot)
 		if err != nil {
 			log.Println("error handlling spot %s, %v", spot.Name, err)
 			return err
 		}
 
 		// if can surf then send report to user
-		// if canSurf {
-		// 	s.Twilio.SendAlert(spot.String())
-		// }
+		if canSurf {
+			g, _ := errgroup.WithContext(ctx)
+
+			for _, s2 := range surfMap {
+				g.Go(func() error {
+					return s.Twilio.SendAlert(s2.String())
+				})
+			}
+
+			if err := g.Wait(); err != nil {
+				log.Printf("error sending alert: %v", err.Error())
+			}
+		}
 	}
 
 	return nil
