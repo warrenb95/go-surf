@@ -10,12 +10,13 @@ import (
 )
 
 type Config struct {
-	ServingPort         uint          `yaml:"servingPort"`
-	Spots               []gosurf.Spot `yaml:"spots"`
-	AccountSID          string        `yaml:"accountSid"`
-	MessagingServiceSid string        `yaml:"messagingServiceSid"`
-	TargetMobileNumber  string        `yaml:"targetMobileNumber"`
-	StormglassURL       string        `yaml:"stormglassURL"`
+	ServingPort          uint          `yaml:"servingPort"`
+	Spots                []gosurf.Spot `yaml:"spots"`
+	AccountSID           string        `yaml:"accountSid"`
+	MessagingServiceSid  string        `yaml:"messagingServiceSid"`
+	TargetMobileNumber   string        `yaml:"targetMobileNumber"`
+	StormglassWeatherURL string        `yaml:"stormglassWeatherURL"`
+	StormglassTideURL    string        `yaml:"stormglassTideURL"`
 }
 
 func Parse(ctx context.Context, filename string) (Config, error) {

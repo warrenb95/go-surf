@@ -13,4 +13,5 @@ spots:
 messagingServiceSid: MG5e6b3d52eaf78d3b746d2c3b51940390
 accountSid: AC3596bf01c9b1d9b42a9f4c330a65b4ba
 targetMobileNumber: +447547640051
-stormglassURL: https://api.stormglass.io/v1/weather/point?
+stormglassWeatherURL: https://api.stormglass.io/v1/weather/point?
+stormglassTideURL: https://api.stormglass.io/v2/tide/extremes/point?

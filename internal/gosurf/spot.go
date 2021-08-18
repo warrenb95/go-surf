@@ -16,8 +16,8 @@ type Spot struct {
 	Lng         float64 `yaml:"lng"`
 	Lat         float64 `yaml:"lat"`
 	Tide        Tide    `yaml:"tide"`
-	Period      int     `yaml:"period"`
-	WaveHeight  int     `yaml:"waveHeight"`
+	Period      float64 `yaml:"period"`
+	WaveHeight  float64 `yaml:"waveHeight"`
 	Temperature Temperature
 	WindSpeed   float64
 }
