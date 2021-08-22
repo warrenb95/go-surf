@@ -9,10 +9,7 @@ I want to save the forecasts to a DB and then collect a dataset of values when t
 ## tech
 The project is built using:
 - Golang
-- REST HTTP
-- gRPC
-- MongoDB
-- NATS
+- HTTP
 - Docker
 - k8's
 
