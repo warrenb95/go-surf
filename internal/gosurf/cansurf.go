@@ -12,18 +12,24 @@ type SurfGuru struct {
 	Client Fetcher
 }
 
-func (s SurfGuru) CanSurf(ctx context.Context, spot Spot) (bool, map[string]*Spot, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*5)
-	defer cancel()
-	spotMap, err := s.Client.Get(ctx, spot, params)
-	if err != nil {
-		log.Printf("error calling surfguru fetcher: %v", err)
-		return false, nil, err
-	}
+func (s SurfGuru) CanSurf(ctx context.Context, inChan <-chan Spot) <-chan map[string]*Spot {
+	outchan := make(chan map[string]*Spot)
 
-	canSurfMap := calculate(spot, spotMap)
+	go func() {
+		defer close(outchan)
+		for spot := range inChan {
+			ctx, cancel := context.WithTimeout(ctx, time.Second*5)
+			defer cancel()
+			spotMap, err := s.Client.Get(ctx, spot, params)
+			if err != nil {
+				log.Printf("error calling surfguru fetcher: %v", err)
+			}
+			outchan <- calculate(spot, spotMap)
+		}
 
-	return true, canSurfMap, nil
+	}()
+
+	return outchan
 }
 
 func calculate(spot Spot, spotMap map[string]map[int]*Spot) map[string]*Spot {
